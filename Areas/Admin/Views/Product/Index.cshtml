@@ -1,0 +1,337 @@
+﻿
+
+@model  PagedList.PagedList<DataAccess.Models.EF.Product>
+@using PagedList.Mvc
+@using PagedList
+@{
+    ViewBag.Title = "Product";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@section naviheader{
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Home Page</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/product" class="nav-link">@ViewBag.Title</a>
+        </li>
+    </ul>
+}
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Products Management</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.Title</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+
+
+<!-- Main content -->
+<section class="content">
+    <!-- Default box -->
+    <div class="card">
+        <!-- card header -->
+        <div class="card-header">
+            <h3 class="card-title">List @ViewBag.Title</h3>
+            <div class="card-tools">
+                <a href="/admin/product/add" class="btn btn-primary">Add new</a>
+                <a href="#" class="btn btn-danger" id="btnDeleteAll">Delete</a>
+            </div>
+        </div>
+        <!--card body-->
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4" style="margin-left:1150px;">
+                    @using (Html.BeginForm("Index", "Product", FormMethod.Get, new { }))
+                    {
+                        <div class="input-group input-group-sm">
+                            @Html.TextBox("searchText")
+                            <span class="input-group-append">
+                                <button type="submit" class="btn btn-outline-dark">Search</button>
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="SelectAll" /></th>
+                        <th>Id</th>
+                        <th>Image</th>
+                        <th>Product name</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Created date</th>
+                        <th>Is Home</th>
+                        <th>Is Sale</th>
+                        <th>Display</th>
+                        <th style="width: 150px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                        foreach (var item in Model)
+                        {
+                            var strCheck = item.IsActive ? "<i class='fa fa-check text-success'></i>" : "<i class='fas fa-times text-danger'></i>";
+                            var strCheckHome = item.IsHome ? "<i class='fa fa-check text-success'></i>" : "<i class='fas fa-times text-danger'></i>";
+                            var strCheckSale = item.IsSale ? "<i class='fa fa-check text-success'></i>" : "<i class='fas fa-times text-danger'></i>";
+                            <tr id="trow_@item.Id">
+                                <td><input type="checkbox" class="=cbkItem" value="@item.Id" /></td>
+                                <td>@i</td>
+                                <td>
+                                    @if (item.ProductImage != null && item.ProductImage.Any(x => x.IsDefault))
+                                    {
+                                        <img class="imgproduct" data-id="@item.Id" src="@item.ProductImage.FirstOrDefault(x => x.IsDefault).Image" width="50" />
+                                    }
+                                </td>
+                                <td>@item.Title</td>
+                                <td>@item.productCategory.Title</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price</td>
+                                <td>@item.CreatedDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <a href="#" data-id="@item.Id" class="btnIsHome" style="margin-left:20px;">
+                                        @Html.Raw(strCheckHome)
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-id="@item.Id" class="btnIsSale" style="margin-left:20px;">
+                                        @Html.Raw(strCheckSale)
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-id="@item.Id" class="btnActive" style="margin-left:20px;">
+                                        @Html.Raw(strCheck)
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/admin/product/edit/@item.Id" class="=btn btn-sm btn-primary">Edit</a>
+                                    <a href="#" data-id="@item.Id" class="=btn btn-sm btn-danger btnDelete">Delete</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">No records !!!</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- PageList -->
+            <div class="row">
+                <div class="col-6"></div>
+                <div class="col-6" style="text-align: right;">
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+
+<div id="dialog">
+    <iframe id="myIframe" style="border: 0; width: 100%; height: 100%;"></iframe>
+</div>
+
+@section scripts{
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Popup form image
+            $("#dialog").dialog({
+                autoOpen: false,
+                show: "fade",
+                hide: "fade",
+                modal: true,
+                height: '600',
+                width: '700',
+                resizable: true,
+                title: 'Product Management',
+                close: function () {
+                    window.location.reload();
+                }
+            });
+            $('body').on("click", ".imgproduct", function () {
+                var proid = $(this).attr("data-id");
+                $("#dialog #myIframe").attr("src", "/admin/ProductImage/Index?id=" + proid);
+                $('#dialog').dialog('open');
+                return false;
+            });
+
+
+
+            $('body').on('click', '.btnDelete', function () {
+                var id = $(this).data("id");
+                var conf = confirm('Click OK to Delete !!!');
+                if (conf === true) {
+                    $.ajax({
+                        url: '/admin/product/delete',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function (result) {
+                            if (result.success) {
+                                $('#trow_' + id).remove();
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Active icon in Display
+            $('body').on('click', '.btnActive', function (event) {
+                event.preventDefault();
+                var btn = $(this);
+                var id = btn.data("id");
+                $.ajax({
+                    url: '/admin/product/IsActive',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (result) {
+                        if (result.success) {
+                            if (result.isActive) {
+                                btn.html("<i class='fa fa-check text-success'></i>");
+                            }
+                            else {
+                                btn.html("<i class='fas fa-times text-danger'></i>");
+                            }
+                        }
+                    }
+                });
+            });
+
+
+            // Is Home check
+            $('body').on('click', '.btnIsHome', function (event) {
+                event.preventDefault();
+                var btn = $(this);
+                var id = btn.data("id");
+                $.ajax({
+                    url: '/admin/product/IsHome',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (result) {
+                        if (result.success) {
+                            if (result.isHome) {
+                                btn.html("<i class='fa fa-check text-success'></i>");
+                            }
+                            else {
+                                btn.html("<i class='fas fa-times text-danger'></i>");
+                            }
+                        }
+                    }
+                });
+            });
+
+
+            // Is Sale check
+            $('body').on('click', '.btnIsSale', function (event) {
+                event.preventDefault();
+                var btn = $(this);
+                var id = btn.data("id");
+                $.ajax({
+                    url: '/admin/product/IsSale',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (result) {
+                        if (result.success) {
+                            if (result.isSale) {
+                                btn.html("<i class='fa fa-check text-success'></i>");
+                            }
+                            else {
+                                btn.html("<i class='fas fa-times text-danger'></i>");
+                            }
+                        }
+                    }
+                });
+            });
+
+
+            // Func Check all
+            $('body').on('change', '#SelectAll', function () {
+                var checkStatus = this.checked;
+                var checkBox = $(this).parents('.card-body').find('tr td input:checkbox');
+                checkBox.each(function () {
+                    this.checked = checkStatus;
+                    if (this.checked) {
+                        checkBox.attr('selected', 'checked');
+                    }
+                    else {
+                        checkBox.attr('selected', '');
+                    }
+                });
+            });
+
+
+            // Func Delete All when selected all
+            $('body').on('click', '#btnDeleteAll', function (e) {
+                e.preventDefault();
+                var str = "";
+                var checkBox = $(this).parents('.card').find('tr td input:checkbox');
+                var i = 0;
+                checkBox.each(function () {
+                    if (this.checked) {
+                        checkBox.attr('selected', 'checked');
+                        var _id = $(this).val();
+                        if (i === 0) {
+                            str += _id;
+                        }
+                        else {
+                            str += "," + _id;
+                        }
+                        i++;
+                    }
+                    else {
+                        checkBox.attr('selected', '');
+                    }
+                });
+                if (str.length > 0) {
+                    var conf = confirm('Click OK to Delete !!!');
+                    if (conf === true) {
+                        $.ajax({
+                            url: '/admin/product/DeleteAll',
+                            type: 'POST',
+                            data: { ids: str },
+                            success: function (result) {
+                                if (result.success) {
+                                    location.reload();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+
+

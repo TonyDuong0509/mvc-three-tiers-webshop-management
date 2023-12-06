@@ -1,0 +1,39 @@
+﻿
+
+@model  List<DataAccess.Models.EF.ProductReview>
+@if (Model != null && Model.Any())
+{
+    <div class="col-lg-6 reviews_col">
+        <div class="tab_title reviews_title">
+            <h4>Reviews (@ViewBag.ShowCount)</h4>
+        </div>
+
+        <!-- User Review -->
+        @foreach (var review in Model)
+        {
+            <div class="user_review_container d-flex flex-column flex-sm-row">
+                <div class="user">
+                    <div class="user_pic"></div>
+                    <div class="user_rating">
+                        <ul class="star_rating">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <li data-rating="@i">
+                                    @if (i <= review.Rating)
+                                    {
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="review">
+                    <div class="review_date">@review.CreatedDate</div>
+                    <div class="user_name">@review.UserName</div>
+                    <p>@review.Comment</p>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,87 @@
+﻿
+
+@model  List<DataAccess.Models.StatisticalRevenue>
+@{
+    ViewBag.Title = "Statistical Revenue";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@ViewBag.Title</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="~/admin/home">Home</a></li>
+                    <li class="breadcrumb-item active">Revenue</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">@ViewBag.Title</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-9">
+                    <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+                </div>
+                <div class="col-3">
+                    @Html.Action("PartialMonthlyRevenue", "StatisticalRevenue")
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+        $(function () {
+        Highcharts.chart('chartContainer', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Total Annual Revenues'
+            },
+            xAxis: {
+                categories: [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ]
+            },
+            yAxis: {
+                title: {
+                    text: 'Total money'
+                }
+            },
+            series: [{
+                name: 'Total money',
+                data: [@string.Join(",", Model.Select(m => m.Revenue))]
+            }]
+        });
+    });
+    </script>
+}
+
+
+

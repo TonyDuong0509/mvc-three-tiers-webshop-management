@@ -1,0 +1,9 @@
+﻿
+
+@model  string
+@if (!string.IsNullOrEmpty(Model))
+{
+    <a class="nav-link" href="#">
+        Hello: <span style="color: black; text-decoration: underline; font-size: 20px;">@Model</span>
+    </a>
+}

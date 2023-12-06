@@ -1,0 +1,101 @@
+﻿
+
+
+
+@model  IEnumerable<DataAccess.Models.ApplicationUser>
+@{
+    ViewBag.Title = "Manage Account";
+}
+
+
+@section naviheader{
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Home Page</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">@ViewBag.Title</a>
+        </li>
+    </ul>
+}
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">List account</h3>
+
+            <div class="card-tools">
+                <a href="/admin/account/create" class="btn btn-success">Add new</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr style="text-align:center">
+                        <th>#</th>
+                        <th>Account</th>
+                        <th>Full name</th>
+                        <th>Email</th>
+                        <th>Created date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_" style="text-align:center">
+                                <td>@i</td>
+                                <td>@item.UserName</td>
+                                <td>@item.Fullname</td>
+                                <td>@item.Email</td>
+                                <td>@item.CreatedDate</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-danger btnDelete" data-id="@item.Id">Delete</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</section>
+<!-- /.content -->
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.btnDelete', function () {
+                var id = $(this).data("id");
+                var conf = confirm('click OK to delete');
+                if (conf === true) {
+                    $.ajax({
+                        url: '/admin/account/Delete',
+                        type: 'POST',
+                        data: { stringId: id },
+                        success: function (result) {
+                            if (result.success) {
+                                $('#trow_' + id).remove();
+                                location.reload();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

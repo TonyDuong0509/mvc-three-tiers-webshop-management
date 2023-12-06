@@ -1,0 +1,63 @@
+﻿@model  DataAccess.Models.ProductReviewViewModel
+<div class="col-lg-6 add_review_col">
+    <div class="add_review">
+        @using (Ajax.BeginForm("AddReview", "Products", new AjaxOptions
+        {
+            OnBegin = "OnBeginReview",
+            OnSuccess = "OnSuccessReview",
+            OnFailure = "OnFailureReview"
+        }, new { @Id = "reviewForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ProductId)
+            <div>
+                <h1>Your Rating:</h1>
+                <ul class="user_star_rating" id="starRating">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <li data-rating="@i"><i class="fa fa-star" aria-hidden="true"></i></li>
+                    }
+                </ul>
+                @Html.HiddenFor(model => model.Rating, new { id = "selectedRating" })
+                @Html.TextAreaFor(x => x.Comment, new { @class = "input_review", placeholder = "Your Review", rows = "4" })
+            </div>
+            <div id="loadingIndicator" style="display: none;">
+                <!-- You can customize the loading indicator here -->
+                Loading...
+            </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                $(document).ready(function () {
+        $('#starRating li').on('click', function () {
+            var rating = $(this).data('rating');
+            $('#selectedRating').val(rating);
+            $(this).addClass('selected').prevAll().addClass('selected');
+            $(this).nextAll().removeClass('selected');
+        });
+
+        $('#reviewForm').on('submit', function (e) {
+            e.preventDefault();
+            $('#loadingIndicator').show();
+            $.ajax({
+                url: '@Url.Action("AddReview", "Products")',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (result) {
+                    $('#loadingIndicator').hide();
+
+                    if (result.Success) {
+                    }
+                },
+                error: function () {
+                    $('#loadingIndicator').hide();
+                }
+            });
+        });
+    });
+            </script>
+            <div class="text-left text-sm-right">
+                <button id="review_submit" type="submit" class="red_button review_submit_btn trans_300 btnSubmit" value="Submit">Comment</button>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,22 @@
+﻿
+
+
+@model  List<DataAccess.Models.StatisticalRevenue>
+<h4 style="font-weight: bold;">List Monthly Revenues</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <td style="font-size: 20px; color: cornflowerblue">Month</td>
+            <td style="font-size: 20px; color: cornflowerblue">Total money</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Month</td>
+                <td>@order.Revenue</td>
+            </tr>
+        }
+    </tbody>
+</table>

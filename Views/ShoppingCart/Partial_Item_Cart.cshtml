@@ -1,0 +1,53 @@
+﻿
+
+
+@model  IEnumerable<DataAccess.Models.ShoppingCartItem>
+<table class="table">
+    <tr class="text-center">
+        <th>Id</th>
+        <th>Product image</th>
+        <th>Product name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th style="width: 50px">Quantity</th>
+        <th>Total money</th>
+    </tr>
+    @if (Model != null && Model.Any())
+    {
+        var i = 0;
+        var total = decimal.Zero;
+        foreach (var item in Model)
+        {
+            total += item.TotalPrice;
+            <tr class="text-center" id="trow_@item.ProductId">
+                <td>@(i + 1)</td>
+                <td><img src="@item.ProductImg" width="60" /></td>
+                <td>
+                    <a href="/product/detail/@item.Alias-@item.ProductId">
+                        @item.ProductName
+                    </a>
+                </td>
+                <td>@item.CategoryName</td>
+                <td>@item.Price</td>
+                <td><input class="form-control" type="number" value="@item.Quantity" id="Quantity_@item.ProductId" /></td>
+                <td>@item.TotalPrice</td>
+                <td>
+                    <a href="#" data-id="@item.ProductId" class="btnDelete btn btn-sm btn-danger">Delete</a>
+                    <a href="#" data-id="@item.ProductId" class="btnUpdate btn btn-sm btn-success">Update</a>
+                </td>
+            </tr>
+            i++;
+        }
+        <tr>
+            <th colspan="6" class="text-right">Total:</th>
+            <th class="text-center">@total</th>
+            <th></th>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td colspan="8">Your cart is empty. Click <a href="/product">here</a> to buy product !!!</td>
+        </tr>
+    }
+</table>

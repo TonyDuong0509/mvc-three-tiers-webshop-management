@@ -1,0 +1,62 @@
+﻿
+
+
+
+@model DataAccess.Models.EF.Subscribe
+
+<!-- Newsletter -->
+<div class="newsletter">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="newsletter_text d-flex flex-column justify-content-center align-items-lg-start align-items-md-center text-center">
+                    <h4>Newsletter</h4>
+                    <p>Subscribe to our newsletter and get 10% off your first purchase</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                @using (Ajax.BeginForm("Subscribe", "Home", new AjaxOptions
+                {
+                    OnBegin = "OnBeginSubscribe",
+                    OnSuccess = "OnSuccessSubscribe",
+                    OnFailure = "OnFailureSubscribe"
+                }))
+                {
+                    @Html.AntiForgeryToken()
+                    <script>
+                        function OnBeginSubscribe() {
+
+                        }
+                        function OnSuccessSubscribe(result) {
+                            if (result.Success) {
+                                alert('Thank you for your subscribe !');
+                                location.reload('');
+                            }
+                            else if (result.ErrorMessage === "You have not log in, please log in before subscribe.") {
+                                var conf = confirm('You have not log in, please log in before subscribe.');
+                                if (conf === true) {
+                                    window.location.href = "@Url.Action("Login", "Account")";
+                                }
+                            }
+                            else if (result.ErrorMessage === "Please input your main email which you registered.") {
+                                alert("Please input your main email which you registered.");
+                                location.reload('');
+                            }
+                            else if (result.ErrorMessage === "Can't subscribe again, because you have been subscribed.") {
+                                alert("Can't subscribe again, because you have been subscribed.");
+                                location.reload;
+                            }
+                        }
+                        function OnFailureSubscribe() {
+
+                        }
+                    </script>
+                    <div class="newsletter_form d-flex flex-md-row flex-column flex-xs-column align-items-center justify-content-lg-end justify-content-center">
+                        <input id="newsletter_email" name="Email" type="email" placeholder="Your email" required="required" data-error="Valid email is required.">
+                        <button id="newsletter_submit" type="submit" class="newsletter_submit_btn trans_300" value="Submit">subscribe</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

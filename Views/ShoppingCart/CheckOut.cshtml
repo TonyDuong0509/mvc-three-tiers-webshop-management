@@ -1,0 +1,105 @@
+﻿
+
+
+
+@{
+    ViewBag.Title = "CheckOut";
+}
+
+<style>
+    .error {
+        color: red;
+    }
+</style>
+
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_responsive.css">
+<link href="~/Content/assets/plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<div class="container product_section_container">
+    <div class="row">
+        <div class="col product_section clearfix">
+
+            <!-- Breadcrumbs -->
+
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="/home/all-home-page">Home</a></li>
+                    <li class="active"><a href="/cart"><i class="fa fa-angle-right" aria-hidden="true"></i>Cart</a></li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1>PAYMENT</h1>
+                    <p>Please check again your cart before paying !</p>
+                </div>
+            </div>
+            <hr />
+            @if (ViewBag.CheckCart != null)
+            {
+                <div class="row">
+                    <div id="show_success"></div>
+                    <div class="col-md-9">
+                        @Html.Action("Partial_CheckOut", "ShoppingCart")
+                    </div>
+                    <div class="col-md-3">
+                        @Html.Action("Partial_Item_Payment", "ShoppingCart")
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div>
+                    Your cart is empty. Click <a href="/home/all-product">here</a> to buy product !!!
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Content/assets/js/categories_custom.js"></script>
+    <script>
+
+         function OnSuccess(result) {
+            if (!result.success) {
+                window.location.href = '@Url.Action("CheckOutSuccess", "ShoppingCart")';
+            }
+        }
+
+        function OnFailure(result) {
+            if (result.success) {
+                $('#show_success').html("You have made a failure purchase !")
+            }
+        }
+
+        $(document).ready(function () {
+            $('#myForm').validate({
+                rules: {
+                    'CustomerName': {
+                        required: true
+                    },
+                    'Phone': {
+                        required: true
+                    },
+                    'Address': {
+                        required: true
+                    },
+                    'Email': {
+                        required: true,
+                        email: true
+                    }
+                },
+                messages: {
+                    'CustomerName': 'You can not be empty this field',
+                    'Phone': 'You can not be empty this field',
+                    'Address': 'You can not be empty this field',
+                    'Email': 'Email is unvalid'
+                }
+            });
+        });
+    </script>
+}
+
